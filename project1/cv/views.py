@@ -1,3 +1,4 @@
+#Importing Packages
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators import gzip
@@ -13,10 +14,9 @@ from .forms import ClassForm, DeleteForm
 from .models import Users, Datatable
 # Create your views here.
 
-#return HttpResponse('Hello Earth')
-	
 CLASSES = 0
 VIDEO_LOCATION = 0
+
 
 def say(request):
     print('v', os.getcwd())
@@ -81,10 +81,9 @@ class VideoCamera(object):
         except Exception as e:
             print('Exception-update', e)
         finally:
-            print('finally')
             record = Datatable.objects.create(classes=','.join(str(e) for e in self.detected_classes), date_d=datetime.date.today())
             record.save()
-            print('datatable', Datatable.objects.all())
+            #print('datatable', Datatable.objects.all())
 
 
 def gen(camera):
@@ -120,7 +119,6 @@ def delete_record(val=15):
         else:
             print('No record is found')
             return(False)
-        #record.save()
     except Exception as e:
         print('Exception-delete_record', e)
 
@@ -137,7 +135,6 @@ def delete_record1(request):
             return HttpResponseRedirect("/cv/st/")
     
     else:
-        #classform_obj = ClassForm()
         return render(request, 'streem1.html', {'form': ClassForm(request), 'form1':DeleteForm()})
     
 
@@ -148,25 +145,14 @@ def stream1(request):
         if form.is_valid():
             val = form.cleaned_data.get("classes_field")
             video_location = form.cleaned_data.get("video_location")
-            print('val', val, video_location)
+            #print('val', val, video_location)
             request.session.setdefault('classes_field', 'person')
             request.session['classes_field'] = val
             global CLASSES, VIDEO_LOCATION
             CLASSES = val
             VIDEO_LOCATION = video_location
-            #classform_obj = ClassForm()
             return render(request, 'streem1.html', {'form':ClassForm(request), 'form1':DeleteForm(), 'flag':True})
-        
-        '''    
-        if form1.is_valid():
-            val = form1.cleaned_data.get("delete_field")
-            print('val', val)
-            delete_record(val)
-            return render(request, 'streem1.html', {'form': form, 'form1':form1})
-        '''
-
     else:
-        #classform_obj = ClassForm(request)
         return render(request, 'streem1.html', {'form': ClassForm(request), 'form1':DeleteForm()})
     
 
