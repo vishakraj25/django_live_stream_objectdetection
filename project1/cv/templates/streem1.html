@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Live Stream Object Detection</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+  <!-- Contact -->
+  <div class="w3-light-grey w3-padding-large w3-padding-32 w3-margin-top" id="contact">
+    <h3 class="w3-center"></h3>
+    <hr>
+    <form method = "post">
+      {% csrf_token %}
+      {{form}}
+      <button type="submit" class="w3-button w3-dark-grey">submit</button>
+    </form><br>
+
+    <form method = "post" action='d/'>
+      {% csrf_token %}
+      {{form1}}
+      <button type="submit" class="w3-button w3-dark-grey">submit</button>
+    </form>
+
+    {% if flag %}
+    <img src="http://127.0.0.1:8000/cv/l/" alt="http://127.0.0.1:8000/cv/l/" class="shrinkToFit" width="798" height="449">
+    {% endif %}
+
+  </div>
+
+<!-- End page content -->
+</div>
+
+</body>
+</html>

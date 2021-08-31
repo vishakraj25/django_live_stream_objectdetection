@@ -1,0 +1,10 @@
+{% load static %}
+<form method = "post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Submit">
+</form>
+{{val}}
+<h1>hello</h1>
+<img src = "{% static 'g.png' %}" height="200" width="200" >
+<br>
