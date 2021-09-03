@@ -3,6 +3,11 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators import gzip
 from django.http import StreamingHttpResponse
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser, FileUploadParser, MultiPartParser
 import cv2
 import threading
 import os
@@ -12,6 +17,7 @@ import datetime
 from . import YoloDetector
 from .forms import ClassForm, DeleteForm
 from .models import Users, Datatable
+from .serializers import cvserializer
 # Create your views here.
 
 CLASSES = 0
@@ -156,3 +162,16 @@ def stream1(request):
         return render(request, 'streem1.html', {'form': ClassForm(request), 'form1':DeleteForm()})
     
 
+class FileUploadView1(APIView):
+    parser_classes = (MultiPartParser, )
+
+    def post(self, request, format='mp4'):
+        up_file = request.FILES['data']
+        destination = open("/home/vishakraj94/project1/static/"+up_file.name, 'wb+')
+        for chunk in up_file.chunks():
+            destination.write(chunk)
+        destination.close() 
+
+        output_name = detector(up_file.name)
+        output_data = "Download the file-https://127.0.0.1:8000/static/"+output_name
+        return Response(output_data, status.HTTP_201_CREATED)
