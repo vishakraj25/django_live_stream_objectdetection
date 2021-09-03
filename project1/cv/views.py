@@ -161,6 +161,43 @@ def stream1(request):
     else:
         return render(request, 'streem1.html', {'form': ClassForm(request), 'form1':DeleteForm()})
     
+def detector(name):
+    try:
+        with open(os.path.join(os.getcwd(), "cv", "coco_names.txt"), 'r') as f:
+            classes = [w.strip() for w in f.readlines()]
+        print(name, "Default classes: \n")
+        selected = {"person": (0, 255, 255),
+                    "laptop": (0, 0, 0)}
+        detector = YoloDetector.YoloDetector(os.path.join(os.getcwd(), "cv", "yolov3-tiny.cfg"), 
+                os.path.join(os.getcwd(), "cv", "yolov3-tiny.weights"), 
+                classes)
+        video_location = os.path.join(os.getcwd(), "static", 'girl1.mp4')
+        cap = cv2.VideoCapture(video_location)
+        print('video open?', cap.isOpened())
+        ret, frame = cap.read()
+        all_frames = []
+        while ret:
+            detections = detector.detect(frame)
+            for cls, color in selected.items():
+                if cls in detections:
+                    for box in detections[cls]:
+                        x1, y1, x2, y2 = box
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), color, thickness=1)
+                        cv2.putText(frame, cls, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color)
+            
+            height, width, layer = frame.shape
+            all_frames.append(frame)
+            ret, frame = cap.read()
+        cap.release()
+        output_name = "detected_"+name.split('.')[0]+'.avi'
+        videos = cv2.VideoWriter(os.path.join(os.getcwd(), "static", output_name), 0, 30, (width, height))#cv2.VideoWriter_fourcc(*'mp4v')
+        for i in all_frames:
+            videos.write(i)
+        videos.release()
+        return(output_name)
+    except Exception as e:
+        print('Detector', e)
+    
 
 class FileUploadView1(APIView):
     parser_classes = (MultiPartParser, )
